@@ -57,9 +57,9 @@ export default function GamePage({ params }: GamePageProps) {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4">
-      <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 w-full max-w-5xl">
-        <div className="flex flex-col items-center gap-4 flex-1">
+    <main className="min-h-screen flex flex-col items-center p-4">
+      <div className="my-auto flex flex-col lg:flex-row items-center lg:items-start gap-6 w-full max-w-5xl">
+        <div className="flex flex-col items-center gap-4 w-full lg:flex-1">
           <ChessBoard
             fen={fen}
             playerColor={playerColor}
