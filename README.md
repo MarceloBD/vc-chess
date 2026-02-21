@@ -2,6 +2,8 @@
 
 Real-time multiplayer chess built with Next.js. Create a game, share the link, and play with a friend — no account required.
 
+**[Live Demo](https://vc-chess.vercel.app/)**
+
 ## Features
 
 - **Instant games** — click "New Game" and share the invite link
