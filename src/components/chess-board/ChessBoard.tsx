@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import type { Square } from "chess.js";
-import type { Piece, PromotionPieceOption } from "react-chessboard/dist/chessboard/types";
+import type { PromotionPieceOption } from "react-chessboard/dist/chessboard/types";
 import type { PlayerColor } from "@/enums/player-color";
 import { GameStatus } from "@/enums/game-status";
 
@@ -96,8 +96,7 @@ export function ChessBoard({
 
   function handlePieceDrop(
     sourceSquare: Square,
-    targetSquare: Square,
-    _piece: Piece
+    targetSquare: Square
   ): boolean {
     if (!canInteract) {
       return false;

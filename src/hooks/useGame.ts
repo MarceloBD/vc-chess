@@ -9,7 +9,6 @@ import type {
   GameResponse,
   MoveRecord,
   PusherMoveEvent,
-  PusherPlayerJoinedEvent,
 } from "@/lib/game/types";
 
 interface UseGameReturn {
@@ -100,7 +99,7 @@ export function useGame(gameId: string, playerId: string | null): UseGameReturn 
       setMoves((previous) => [...previous, data.move]);
     });
 
-    channel.bind("player-joined", (_data: PusherPlayerJoinedEvent) => {
+    channel.bind("player-joined", () => {
       setIsOpponentConnected(true);
       setStatus(GameStatus.PLAYING);
     });

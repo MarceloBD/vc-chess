@@ -8,6 +8,7 @@ import { GameInfo } from "@/components/game-info/GameInfo";
 import { InviteLink } from "@/components/invite-link/InviteLink";
 import { MoveHistory } from "@/components/move-history/MoveHistory";
 import { GameStatus } from "@/enums/game-status";
+import Link from "next/link";
 
 interface GamePageProps {
   params: Promise<{ gameId: string }>;
@@ -44,12 +45,12 @@ export default function GamePage({ params }: GamePageProps) {
       <main className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
           <p className="text-red-400 text-lg">{error}</p>
-          <a
+          <Link
             href="/"
             className="text-zinc-400 hover:text-white transition-colors underline"
           >
             Back to home
-          </a>
+          </Link>
         </div>
       </main>
     );
@@ -82,12 +83,12 @@ export default function GamePage({ params }: GamePageProps) {
 
           <MoveHistory moves={moves} />
 
-          <a
+          <Link
             href="/"
             className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors text-center"
           >
             New Game
-          </a>
+          </Link>
         </div>
       </div>
     </main>
