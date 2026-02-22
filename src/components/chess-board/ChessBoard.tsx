@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import type { Square } from "chess.js";
@@ -28,12 +28,17 @@ export function ChessBoard({
     from: Square;
     to: Square;
   } | null>(null);
+  const [selectedSquare, setSelectedSquare] = useState<Square | null>(null);
 
   const isPlayerTurn = turn === playerColor;
   const isGameActive = status === GameStatus.PLAYING;
   const canInteract = isPlayerTurn && isGameActive;
 
   const boardOrientation = playerColor === "b" ? "black" : "white";
+
+  useEffect(() => {
+    setSelectedSquare(null);
+  }, [fen]);
 
   const highlightedSquares = useMemo(() => {
     const chess = new Chess(fen);
@@ -53,8 +58,26 @@ export function ChessBoard({
       }
     }
 
+    if (selectedSquare) {
+      styles[selectedSquare] = {
+        ...styles[selectedSquare],
+        backgroundColor: "rgba(255, 255, 0, 0.4)",
+      };
+
+      const legalMoves = chess.moves({ square: selectedSquare, verbose: true });
+      for (const move of legalMoves) {
+        const isCapture = chess.get(move.to as Square);
+        styles[move.to] = {
+          ...styles[move.to],
+          background: isCapture
+            ? "radial-gradient(circle, transparent 55%, rgba(0, 0, 0, 0.15) 55%)"
+            : "radial-gradient(circle, rgba(0, 0, 0, 0.15) 25%, transparent 25%)",
+        };
+      }
+    }
+
     return styles;
-  }, [fen, canInteract, turn]);
+  }, [fen, canInteract, turn, selectedSquare]);
 
   function findKingSquare(chess: Chess, color: PlayerColor): Square | null {
     const board = chess.board();
@@ -94,10 +117,53 @@ export function ChessBoard({
     }
   }
 
+  function handleSquareClick(square: Square) {
+    if (!canInteract) {
+      return;
+    }
+
+    const chess = new Chess(fen);
+    const piece = chess.get(square);
+
+    if (!selectedSquare) {
+      if (piece && piece.color === playerColor) {
+        setSelectedSquare(square);
+      }
+      return;
+    }
+
+    if (selectedSquare === square) {
+      setSelectedSquare(null);
+      return;
+    }
+
+    if (piece && piece.color === playerColor) {
+      setSelectedSquare(square);
+      return;
+    }
+
+    if (needsPromotion(selectedSquare, square)) {
+      setPendingMove({ from: selectedSquare, to: square });
+      setPromotionSquare(square);
+      setSelectedSquare(null);
+      return;
+    }
+
+    if (isValidLocalMove(selectedSquare, square)) {
+      onMove(selectedSquare, square);
+      setSelectedSquare(null);
+      return;
+    }
+
+    setSelectedSquare(null);
+  }
+
   function handlePieceDrop(
     sourceSquare: Square,
     targetSquare: Square
   ): boolean {
+    setSelectedSquare(null);
+
     if (!canInteract) {
       return false;
     }
@@ -154,6 +220,7 @@ export function ChessBoard({
         id="online-chess"
         position={fen}
         onPieceDrop={handlePieceDrop}
+        onSquareClick={handleSquareClick}
         boardOrientation={boardOrientation}
         isDraggablePiece={isDraggablePiece}
         customSquareStyles={highlightedSquares}
